@@ -1,0 +1,3 @@
+[submodule "qnet3"]
+	path = qnet3
+	url = https://github.com/NoahCardoza/qnet3.git

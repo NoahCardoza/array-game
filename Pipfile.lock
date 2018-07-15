@@ -1,0 +1,53 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "541e57fd43b5a6e584d29f8ff4d8eee0c71b60658be57e853688ffa3ed11dee0"
+        },
+        "host-environment-markers": {
+            "implementation_name": "cpython",
+            "implementation_version": "3.6.5",
+            "os_name": "posix",
+            "platform_machine": "x86_64",
+            "platform_python_implementation": "CPython",
+            "platform_release": "17.4.0",
+            "platform_system": "Darwin",
+            "platform_version": "Darwin Kernel Version 17.4.0: Sun Dec 17 09:19:54 PST 2017; root:xnu-4570.41.2~1/RELEASE_X86_64",
+            "python_full_version": "3.6.5",
+            "python_version": "3.6",
+            "sys_platform": "darwin"
+        },
+        "pipfile-spec": 6,
+        "requires": {},
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.python.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "flata": {
+            "hashes": [
+                "sha256:d1634fa040a1f142bb19c7983003c425bba7bb89d1cce2a0f50a8e8d21c5e3e5",
+                "sha256:2f1d7859e8c446481153ace615cc306a1f669cfd88aa7c180a34398583a4d9c8"
+            ],
+            "version": "==5.0.0"
+        },
+        "schedule": {
+            "hashes": [
+                "sha256:a24e75fc5e5acbd204049d55329e39a2a9a3479bca2e34c7fde81386c9d8d2fa",
+                "sha256:1003a07c2dce12828c25a03a611a7371cedfa956e5f1b4abc32bcc94eb5a335b"
+            ],
+            "version": "==0.5.0"
+        },
+        "tinydb": {
+            "hashes": [
+                "sha256:ac9370ca9f0f93fb868e8a35b62685f4a0f50c0b6a851eacaa72a509ba4eeffc",
+                "sha256:88793016ba94267e3606372e1564d4e797eae855acd5a48352011bfdcf8ee7ad"
+            ],
+            "version": "==3.9.0.post1"
+        }
+    },
+    "develop": {}
+}

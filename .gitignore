@@ -1,0 +1,8 @@
+__pycache__
+db*.json
+client.py
+whiteboard.py
+.DS_Store
+testing/
+traces/*.traceback
+bots/*.py
