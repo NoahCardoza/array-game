@@ -2,7 +2,6 @@ import qnet3
 import time
 import database
 from database import getUserByPassphrase, formatedBoard, getLastTraceByPassphrase, addUser
-from nonblocking import input
 import importlib
 import botmanager
 import schedule

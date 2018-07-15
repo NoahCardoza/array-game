@@ -6,7 +6,6 @@ import hashlib
 from functools import partial
 from database import getTheBoard, setTheBoard, getUserByPassphrase, formatedBoard, updateUserByPassphrase
 import traceback
-from nonblocking import input
 
 sandbox = True
 bots = []
