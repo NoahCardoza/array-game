@@ -64,7 +64,7 @@ def execute(bot):
                 else:
                     raise BotReturnException("ReturnValueNotInt")
                 hpChange = (board[user['index']] == user['char']) or -1
-                print ('User:', user['char'], 'is on a', board[user['index']], 'tile. Health +=', hpChange)
+                # print ('User:', user['char'], 'is on a', board[user['index']], 'tile. Health +=', hpChange)
                 newHealth = user['health'] + hpChange
                 if newHealth <= 0: # dead
                     print ('Robot {} died.'.format(user['char']))
