@@ -15,6 +15,8 @@ def getNextChar(static=dict(char='A'), reset=False):
         c = static['char']
         if c == 'Z':
             raise Exception('No more characters can be added to the server at this time.')
+        elif c == 'X': # This should probably be changed
+            c = 'Y'
         static['char'] = chr(ord(c) + 1)
         if getUserByChar(c):
             return getNextChar()
@@ -32,53 +34,6 @@ def init():
         name = input('Name: ')
         passphrase = input('Passphrase: ')
         addUser(name, passphrase, admin=True)
-
-
-        # # sample data
-        # Users.insert({
-        #     'passphrase': 'killerkido',
-        #     'name': 'Noah',
-        #     'char': 'A',
-        #     'index': 0,
-        #     'health': 50,
-        #     'admin': True
-        # })
-        #
-        # Users.insert({
-        #     'passphrase': 'blackjack',
-        #     'name': 'Nick',
-        #     'char': 'B',
-        #     'index': 0,
-        #     'health': 50,
-        #     'admin': False
-        # })
-        #
-        # Users.insert({
-        #     'passphrase': 'tensetesla',
-        #     'name': 'Chris',
-        #     'char': 'C',
-        #     'index': 0,
-        #     'health': 50,
-        #     'admin': False
-        # })
-        #
-        # Users.insert({
-        #     'passphrase': 'antman',
-        #     'name': 'Anthony',
-        #     'char': 'D',
-        #     'index': 0,
-        #     'health': 50,
-        #     'admin': False
-        # })
-        #
-        # Users.insert({
-        #     'passphrase': 'madmax',
-        #     'name': 'Max',
-        #     'char': 'E',
-        #     'index': 0,
-        #     'health': 50,
-        #     'admin': False
-        # })
 
 
 def getTheBoard():
@@ -136,12 +91,12 @@ def reset(hard=False):
 
 def addUser(name, passphrase, admin=False):
     Users.insert({
-        'name': admin,
+        'name': name,
         'passphrase': passphrase,
         'char': getNextChar(),
         'index': 0,
         'health': 50,
-        'admin': admin
+        'admin': bool(admin)
     })
 
 #
