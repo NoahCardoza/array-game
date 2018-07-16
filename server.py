@@ -107,13 +107,18 @@ def reset(hard=False):
     database.reset(hard)
     botmanager.reset(hard)
 
+def dailyReset():
+    print ('Starting 8:30 reset...')
+    reset()
+    print ('Reset complete.')
+    
 # def endMatch():
 #     board = getTheBoard()
 #     counted = Counter(board)
 #     orderedCount = sorted(counted.keys())
 
 
-schedule.every().day.at("8:30").do(reset)
+schedule.every().day.at("8:30").do(dailyReset)
 database.init()
 
 try:
@@ -121,16 +126,17 @@ try:
         server.update()
         botmanager.update()
         for bot in botmanager.bots:
-            print(bot.__name__, 'MOVED', botmanager.execute(bot))
+            botmanager.execute(bot)
+            # print(bot.__name__, 'MOVED', botmanager.execute(bot))
         schedule.run_pending()
         for _ in range(len(COMMAND_STACK)):
             item = COMMAND_STACK.pop(0)
             print (item)
             if item['cmd'] == 'RESET':
                 hard = 'hard' in item['args']
-                print('hard:', hard)
                 reset(hard=hard)
 
         time.sleep(1)
 except KeyboardInterrupt:
     server.sock.close()
+    print ("\nHave a good day!")
