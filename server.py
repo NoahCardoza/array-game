@@ -116,18 +116,21 @@ def reset(hard=False):
 schedule.every().day.at("8:30").do(reset)
 database.init()
 
-while True:
-    server.update()
-    botmanager.update()
-    for bot in botmanager.bots:
-        print(bot.__name__, 'MOVED', botmanager.execute(bot))
-    schedule.run_pending()
-    for _ in range(len(COMMAND_STACK)):
-        item = COMMAND_STACK.pop(0)
-        print (item)
-        if item['cmd'] == 'RESET':
-            hard = 'hard' in item['args']
-            print('hard:', hard)
-            reset(hard=hard)
+try:
+    while True:
+        server.update()
+        botmanager.update()
+        for bot in botmanager.bots:
+            print(bot.__name__, 'MOVED', botmanager.execute(bot))
+        schedule.run_pending()
+        for _ in range(len(COMMAND_STACK)):
+            item = COMMAND_STACK.pop(0)
+            print (item)
+            if item['cmd'] == 'RESET':
+                hard = 'hard' in item['args']
+                print('hard:', hard)
+                reset(hard=hard)
 
-    time.sleep(1)
+        time.sleep(1)
+except KeyboardInterrupt:
+    server.sock.close()
