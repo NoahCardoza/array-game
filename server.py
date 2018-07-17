@@ -95,14 +95,6 @@ class Connector(qnet3.Connector):
             return self.respond(PassphraseError)
         return self.respond(RequestError)
 
-while True:
-    try:
-        server = qnet3.Server('0.0.0.0', 7777, Connector)
-        break
-    except OSError as e:
-        print (e)
-        time.sleep(1)
-
 def reset(hard=False):
     database.reset(hard)
     botmanager.reset(hard)
@@ -111,7 +103,7 @@ def dailyReset():
     print ('Starting 8:30 reset...')
     reset()
     print ('Reset complete.')
-    
+
 # def endMatch():
 #     board = getTheBoard()
 #     counted = Counter(board)
@@ -121,7 +113,7 @@ def dailyReset():
 schedule.every().day.at("8:30").do(dailyReset)
 database.init()
 
-try:
+def main(server):
     while True:
         server.update()
         botmanager.update()
@@ -135,8 +127,21 @@ try:
             if item['cmd'] == 'RESET':
                 hard = 'hard' in item['args']
                 reset(hard=hard)
-
         time.sleep(1)
-except KeyboardInterrupt:
-    server.sock.close()
-    print ("\nHave a good day!")
+
+while True:
+    while True:
+        try:
+            server = qnet3.Server('0.0.0.0', 7777, Connector)
+            break
+        except OSError as e:
+            print (e)
+            time.sleep(1)
+    try:
+        main(server)
+    except KeyboardInterrupt:
+        server.sock.close()
+        print ("\nHave a good day!")
+        exit()
+    except:
+        pass
