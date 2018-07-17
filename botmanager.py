@@ -143,5 +143,6 @@ def reset(hard=False):
         [os.remove(f) for f in glob('bots/*.py')]
     [os.remove(f) for f in glob('traces/*')]
     for _ in range(len(bots)):
-        del sys.modules[bots[0].__name__]
-        del bots[0]
+        bot = bots.pop(0)
+        if not bot.__broken__: # if is isn't a real module, you can't remove it from sys.modules
+            del sys.modules[bot.__name__]
