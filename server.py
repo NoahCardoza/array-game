@@ -7,6 +7,9 @@ import botmanager
 import schedule
 from collections import Counter
 from safelist import SafeList
+import sys
+
+sys.stdout = open('server.log','wt') # hack until I implement logging
 
 CommandError = 'CommandError'
 PassphraseError = 'PassphraseError'
@@ -141,6 +144,7 @@ while True:
         main(server)
     except KeyboardInterrupt:
         server.sock.close()
+        sys.stdout.close()
         print ("\nHave a good day!")
         exit()
     except:
