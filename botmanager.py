@@ -67,9 +67,9 @@ def execute(bot):
                 # print ('User:', user['char'], 'is on a', board[user['index']], 'tile. Health +=', hpChange)
                 newHealth = user['health'] + hpChange
                 if newHealth <= 0: # dead
-                    print ('Robot {} died.'.format(user['char']))
+                    # print ('Robot {} died.'.format(user['char']))
                     if sandbox:
-                        print ('Sandbox mode active. Reviving now.')
+                        # print ('Sandbox mode active. Reviving now.')
                         board = ['X' if tile == user['char'] else tile for tile in board]
                         newHealth = 50
                         user['index'] = 0
