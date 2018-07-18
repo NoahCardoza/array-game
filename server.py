@@ -87,8 +87,8 @@ class Connector(qnet3.Connector):
             user = getUserByPassphrase(passphrase)
             if user:
                 if isValidCommand(command, user['admin']):
-                    logger.debug('Passphrase:', passphrase)
-                    logger.debug('Command:', command)
+                    logger.debug('Passphrase: {}'.format(passphrase))
+                    logger.debug('Command: {}'.format(command))
                     if not getattr(HandleAdminCommands, command)(user, self, SafeList(args), msg):
                         self.respond('ok')
                     return
