@@ -3,6 +3,7 @@
 db*.json
 traces/*.traceback
 bots/*.py
+logs/
 
 # Other
 client.py

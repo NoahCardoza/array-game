@@ -98,9 +98,3 @@ def addUser(name, passphrase, admin=False):
         'health': 50,
         'admin': bool(admin)
     })
-
-#
-# if __name__ == '__main__':
-#     print(getNextChar())
-#     print(getNextChar())
-#     print(getNextChar())

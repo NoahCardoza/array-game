@@ -6,6 +6,23 @@ import hashlib
 from functools import partial
 from database import getTheBoard, setTheBoard, getUserByPassphrase, formatedBoard, updateUserByPassphrase
 import traceback
+import logging
+
+from logger import logger
+
+import signal
+
+class timeout:
+    def __init__(self, seconds=1, error_message='Timeout'):
+        self.seconds = seconds
+        self.error_message = error_message
+    def handle_timeout(self, signum, frame):
+        raise TimeoutError(self.error_message)
+    def __enter__(self):
+        signal.signal(signal.SIGALRM, self.handle_timeout)
+        signal.alarm(self.seconds)
+    def __exit__(self, type, value, traceback):
+        signal.alarm(0)
 
 sandbox = True
 bots = []
@@ -14,7 +31,7 @@ class BotReturnException(Exception):
     pass
 
 def saveTraceByPassphrase(passphrase):
-    print ('HandledException:', sys.exc_info()[1])
+    logger.error('HandledException ({}): {}'.format(passphrase, sys.exc_info()[1]))
     with open('traces/' + passphrase + '', 'w') as f:
         traceback.print_exc(file=f)
 
@@ -41,7 +58,8 @@ def execute(bot):
     user = getUserByPassphrase(passphrase)
     if user and user['health']:
         try:
-            move = bot.run(formatedBoard())
+            with timeout(seconds=1):
+                move = bot.run(formatedBoard())
         except:
             saveTraceByPassphrase(passphrase)
         else:
@@ -81,7 +99,7 @@ def execute(bot):
             except BotReturnException:
                 saveTraceByPassphrase(passphrase)
             except:
-                traceback.print_exc()
+                logger.exception('botmanager.execute encountered an internal error')
 
     return move
 
@@ -100,7 +118,7 @@ def importBot(name):
         module = importlib.import_module('bots.' + name)
         module.__broken__ = False
     except:
-        print ('Initiating Borken Bot')
+        logger.debug('Initiating Broken Bot')
         module = brokenBot()
         module.__name__ = 'bots.' + name
         module.__file__ = pwd + '/bots/' + name + '.py'
@@ -119,7 +137,7 @@ def update():
         filename = path.rsplit('/', 1)[1]
         name = filename.split('.')[0]
         module = importBot(name)
-        print('Bot Loaded:', module)
+        logger.debug('Bot Loaded: ' + str(module))
         module.__hash__ = hash
         bots.append(module)
 
@@ -130,7 +148,7 @@ def update():
                 if (m.__broken__):
                     bots[bots.index(m)] = importBot(getBotName(m))
                 else:
-                    print('Bot Relaoded:', importlib.reload(m))
+                    logger.debug('Bot Reloaded: ' + str(importlib.reload(m)))
             except:
                 passphrase = getBotPassphrase(m)
                 module = importBot(passphrase)

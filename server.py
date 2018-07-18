@@ -7,9 +7,7 @@ import botmanager
 import schedule
 from collections import Counter
 from safelist import SafeList
-import sys
-
-sys.stdout = open('server.log','wt') # hack until I implement logging
+from logger import logger
 
 CommandError = 'CommandError'
 PassphraseError = 'PassphraseError'
@@ -73,7 +71,7 @@ def isValidCommand(command, isAdmin): # checks if the command is valid for the u
 class Connector(qnet3.Connector):
     """docstring for Connector"""
     def message (self, msg):
-        print("Received '{}' from [{}:{}]".format(msg, *self.addr))
+        logger.debug("Received '{}' from [{}:{}]".format(msg, *self.addr))
         args = msg.split()
         if len(args) == 1:
             arg = args[0]
@@ -89,8 +87,8 @@ class Connector(qnet3.Connector):
             user = getUserByPassphrase(passphrase)
             if user:
                 if isValidCommand(command, user['admin']):
-                    print ('Passphrase:', passphrase)
-                    print ('Command:', command)
+                    logger.debug('Passphrase:', passphrase)
+                    logger.debug('Command:', command)
                     if not getattr(HandleAdminCommands, command)(user, self, SafeList(args), msg):
                         self.respond('ok')
                     return
@@ -103,18 +101,18 @@ def reset(hard=False):
     botmanager.reset(hard)
 
 def dailyReset():
-    print ('Starting 8:30 reset...')
+    logger.debug('Starting 8:30 reset...')
     reset()
-    print ('Reset complete.')
+    logger.debug('Reset complete.')
 
 # def endMatch():
 #     board = getTheBoard()
 #     counted = Counter(board)
 #     orderedCount = sorted(counted.keys())
 
-
 schedule.every().day.at("8:30").do(dailyReset)
 database.init()
+server = None
 
 def main(server):
     while True:
@@ -122,30 +120,32 @@ def main(server):
         botmanager.update()
         for bot in botmanager.bots:
             botmanager.execute(bot)
-            # print(bot.__name__, 'MOVED', botmanager.execute(bot))
+            # logger.debug(bot.__name__, 'MOVED', botmanager.execute(bot))
         schedule.run_pending()
         for _ in range(len(COMMAND_STACK)):
             item = COMMAND_STACK.pop(0)
-            print (item)
             if item['cmd'] == 'RESET':
                 hard = 'hard' in item['args']
                 reset(hard=hard)
         time.sleep(1)
 
+
+
 while True:
-    while True:
+    while not server:
         try:
             server = qnet3.Server('0.0.0.0', 7777, Connector)
             break
         except OSError as e:
-            print (e)
-            time.sleep(1)
+            logger.error(e)
+            time.sleep(5)
     try:
+        logger.debug('Server listening on port 7777.')
         main(server)
     except KeyboardInterrupt:
         server.sock.close()
-        sys.stdout.close()
         print ("\nHave a good day!")
         exit()
     except:
-        pass
+        logger.exception('The server encountered an internal error. Restarting')
+        time.sleep(5)

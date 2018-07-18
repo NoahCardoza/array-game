@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/Users/noahcardoza/projects/array-game/botmanager.py", line 62, in execute
+    move = bot.run(formatedBoard())
+  File "/Users/noahcardoza/projects/array-game/bots/itisme.py", line 5, in run
+  File "/Users/noahcardoza/projects/array-game/botmanager.py", line 20, in handle_timeout
+    raise TimeoutError(self.error_message)
+TimeoutError: Timeout
