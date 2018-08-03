@@ -32,7 +32,7 @@ class BotReturnException(Exception):
 
 def saveTraceByPassphrase(passphrase):
     logger.error('HandledException ({}): {}'.format(passphrase, sys.exc_info()[1]))
-    with open('traces/' + passphrase + '', 'w') as f:
+    with open('traces/' + passphrase + '.traceback', 'w') as f:
         traceback.print_exc(file=f)
 
 def md5sum(filename):
@@ -58,9 +58,10 @@ def execute(bot):
     user = getUserByPassphrase(passphrase)
     if user and user['health']:
         try:
-            with timeout(seconds=1):
+            with timeout(seconds=0.5):
                 move = bot.run(formatedBoard())
         except:
+            bot.__timeouts__ += 1
             saveTraceByPassphrase(passphrase)
         else:
             try:
@@ -104,24 +105,28 @@ def execute(bot):
     return move
 
 class brokenBot(object):
-    __broken__ = True
-
     def run(self, board):
         return 0
 
-def importBot(name):
+def importBot(name, useBroken=False):
     pwd = os.getcwd()
     try:
-        # this means that there was an error reloadeing and we sould fill it's
-        # place with a brokenBot instance
+        if useBroken:
+            # A hack to skip the except block. Used for replacing bots that
+            # violate timeout restrictions too often
+            raise Exception('Use brokenBot instance.')
         if sys.modules.get('bots.' + name): raise BaseException('AlreadyImported')
         module = importlib.import_module('bots.' + name)
         module.__broken__ = False
     except:
+        # this means that there was an error reloadeing and we sould fill it's
+        # place with a brokenBot instance
         logger.debug('Initiating Broken Bot')
         module = brokenBot()
+        module.__broken__ = True
         module.__name__ = 'bots.' + name
         module.__file__ = pwd + '/bots/' + name + '.py'
+    module.__timeouts__ = 0
     return module
 
 def update():
@@ -146,7 +151,9 @@ def update():
             m.__hash__ = h
             try:
                 if (m.__broken__):
-                    bots[bots.index(m)] = importBot(getBotName(m))
+                    module = importBot(getBotPassphrase(m))
+                    module.__hash__ = h
+                    bots[bots.index(m)] = module
                 else:
                     logger.debug('Bot Reloaded: ' + str(importlib.reload(m)))
             except:
@@ -155,6 +162,15 @@ def update():
                 module.__hash__ = h
                 bots[bots.index(m)] = module
                 saveTraceByPassphrase(passphrase)
+        elif m.__timeouts__ > 5:
+            logger.debug('Reoccurring timeout error detected.')
+            passphrase = getBotPassphrase(m)
+            module = importBot(passphrase)
+            module.__hash__ = h
+            bots[bots.index(m)] = module
+            with open('traces/' + passphrase + '.traceback', 'a') as f:
+                t.write('\n\nYour bot has been suspended because of too many timeouts.')
+
 
 def reset(hard=False):
     if hard:
