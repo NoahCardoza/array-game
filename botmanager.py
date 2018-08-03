@@ -115,13 +115,15 @@ def importBot(name, useBroken=False):
             # A hack to skip the except block. Used for replacing bots that
             # violate timeout restrictions too often
             raise Exception('Use brokenBot instance.')
-        if sys.modules.get('bots.' + name): raise BaseException('AlreadyImported')
-        module = importlib.import_module('bots.' + name)
+        if sys.modules.get('bots.' + name): raise Exception('AlreadyImported')
+        with timeout(seconds=1):
+            module = importlib.import_module('bots.' + name)
         module.__broken__ = False
     except:
         # this means that there was an error reloadeing and we sould fill it's
         # place with a brokenBot instance
         logger.debug('Initiating Broken Bot')
+        saveTraceByPassphrase(name)
         module = brokenBot()
         module.__broken__ = True
         module.__name__ = 'bots.' + name
@@ -136,7 +138,6 @@ def update():
     filesInUse = set([bot.__file__ for bot in bots])
     toBeLoaded = files - filesInUse
     botsInUse = bots.copy()
-    # print ('toBeLoaded:', toBeLoaded)
     for path in toBeLoaded:
         hash = md5sum(path)
         filename = path.rsplit('/', 1)[1]
@@ -157,6 +158,7 @@ def update():
                 else:
                     logger.debug('Bot Reloaded: ' + str(importlib.reload(m)))
             except:
+                print ('Reimport Exception')
                 passphrase = getBotPassphrase(m)
                 module = importBot(passphrase)
                 module.__hash__ = h
