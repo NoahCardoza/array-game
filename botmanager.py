@@ -169,7 +169,7 @@ def update():
             module.__hash__ = h
             bots[bots.index(m)] = module
             with open('traces/' + passphrase + '.traceback', 'a') as f:
-                t.write('\n\nYour bot has been suspended because of too many timeouts.')
+                f.write('\n\nYour bot has been suspended because of too many timeouts.')
 
 
 def reset(hard=False):
