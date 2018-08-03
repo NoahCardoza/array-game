@@ -58,7 +58,7 @@ def execute(bot):
     user = getUserByPassphrase(passphrase)
     if user and user['health']:
         try:
-            with timeout(seconds=0.5):
+            with timeout(seconds=1):
                 move = bot.run(formatedBoard())
         except:
             bot.__timeouts__ += 1
