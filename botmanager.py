@@ -120,7 +120,8 @@ def importBot(name, useBroken=False):
             raise ServerWarning('Use brokenBot instance.')
         existing_module = sys.modules.get('bots.' + name)
         if existing_module:
-            logger.debug('Bot Reloaded: ' + str(importlib.reload(m)))
+            logger.debug('Bot Reloaded: ' + str(importlib.reload(existing_module)))
+            existing_module.__timeouts__ = 0
             return existing_module
             # raise ServerWarning('AlreadyImported')
         with timeout(seconds=1):
