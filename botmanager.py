@@ -118,7 +118,11 @@ def importBot(name, useBroken=False):
             # A hack to skip the except block. Used for replacing bots that
             # violate timeout restrictions too often
             raise ServerWarning('Use brokenBot instance.')
-        if sys.modules.get('bots.' + name): raise ServerWarning('AlreadyImported')
+        existing_module = sys.modules.get('bots.' + name)
+        if existing_module:
+            logger.debug('Bot Reloaded: ' + str(importlib.reload(m)))
+            return existing_module
+            # raise ServerWarning('AlreadyImported')
         with timeout(seconds=1):
             module = importlib.import_module('bots.' + name)
         module.__broken__ = False
@@ -173,7 +177,7 @@ def update():
         elif m.__timeouts__ > 5:
             logger.debug('Reoccurring timeout error detected.')
             passphrase = getBotPassphrase(m)
-            module = importBot(passphrase)
+            module = importBot(passphrase, useBroken=True)
             module.__hash__ = h
             bots[bots.index(m)] = module
             with open('traces/' + passphrase + '.traceback', 'a') as f:
