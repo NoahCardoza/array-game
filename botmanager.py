@@ -122,13 +122,14 @@ def importBot(name, useBroken=False):
         with timeout(seconds=1):
             module = importlib.import_module('bots.' + name)
         module.__broken__ = False
-    except ServerWarning: # don't alert the user of these errors
-        logger.exception("ServerWarning")
-    except Exception:
+    except Exception as e:
         # this means that there was an error reloadeing and we sould fill it's
         # place with a brokenBot instance
         logger.debug('Initiating Broken Bot')
-        saveTraceByPassphrase(name)
+        if isinstance(e, ServerWarning): # don't give the use these errors
+            logger.exception("ServerWarning")
+        else: # it was most likely the users falt
+            saveTraceByPassphrase(name)
         module = brokenBot()
         module.__broken__ = True
         module.__name__ = 'bots.' + name
