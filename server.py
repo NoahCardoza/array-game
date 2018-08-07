@@ -143,7 +143,7 @@ while True:
         logger.debug('Server listening on port 7777.')
         main(server)
     except KeyboardInterrupt:
-        server.shutdown()
+        server.close()
         print ("\nHave a good day!")
         exit()
     except:
