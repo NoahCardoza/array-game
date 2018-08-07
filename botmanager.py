@@ -133,7 +133,7 @@ def importBot(name, useBroken=False):
         module.__broken__ = True
         module.__name__ = 'bots.' + name
         module.__file__ = pwd + '/bots/' + name + '.py'
-    module.__timeouts__ = 0
+        module.__timeouts__ = 0
     return module
 
 def update():
