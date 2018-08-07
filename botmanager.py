@@ -30,6 +30,9 @@ bots = []
 class BotReturnException(Exception):
     pass
 
+class ServerWarning(Exception):
+    pass
+
 def saveTraceByPassphrase(passphrase):
     logger.error('HandledException ({}): {}'.format(passphrase, sys.exc_info()[1]))
     with open('traces/' + passphrase + '.traceback', 'w') as f:
@@ -114,12 +117,14 @@ def importBot(name, useBroken=False):
         if useBroken:
             # A hack to skip the except block. Used for replacing bots that
             # violate timeout restrictions too often
-            raise Exception('Use brokenBot instance.')
-        if sys.modules.get('bots.' + name): raise Exception('AlreadyImported')
+            raise ServerWarning('Use brokenBot instance.')
+        if sys.modules.get('bots.' + name): raise ServerWarning('AlreadyImported')
         with timeout(seconds=1):
             module = importlib.import_module('bots.' + name)
         module.__broken__ = False
-    except:
+    except ServerWarning: # don't alert the user of these errors
+        logger.exception("ServerWarning")
+    except Exception:
         # this means that there was an error reloadeing and we sould fill it's
         # place with a brokenBot instance
         logger.debug('Initiating Broken Bot')
